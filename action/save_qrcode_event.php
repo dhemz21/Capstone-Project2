@@ -38,8 +38,7 @@ if (isset($_POST['text'])) {
          $count = mysqli_num_rows($result);
          if($count>0){
             echo "<script>alert('Data Existed!'); window.location.href='.?folder=pages/&page=school_event';</script>";
-
-            
+        
         }else{
 
             $sql = "INSERT INTO online_attendance (Registered_ID, IDnumber, Email, username, firstname, lastname, log_date, time_in, login_type)VALUES ('$reg_id', '$idnumber', '$mail', '$login_username', '$fname', '$lname', '$date', '$time', '$type')";

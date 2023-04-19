@@ -32,7 +32,10 @@
     <!-- QR CODE SCANNER SECTION -->
     <script type="text/javascript">
         let scanner = new Instascan.Scanner({
-            video: document.getElementById('preview')
+            video: document.getElementById('preview'),
+            mirror: false,
+            captureImage: true,
+            rotation: 90
         });
         scanner.addListener('scan', function(content) {
             console.log(content);
