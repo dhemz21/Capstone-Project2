@@ -75,7 +75,7 @@
                     // When the AJAX request is complete, remove the attendance data from the local storage
                     syncXhr.onload = function() {
                         if (syncXhr.status === 200) {
-                            // localStorage.removeItem('attendanceData');
+                            localStorage.removeItem('attendanceData');
                             console.log(xhr.responseText);
                             alert('Attendance data has been synchronized successfully!');
                         } else {
