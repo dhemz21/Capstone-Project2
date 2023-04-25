@@ -21,6 +21,9 @@
                             <div class="col-12 mb-2 mt-4">
                 <p class="text-start"><a href=".?page=menu" class="text-decoration-none">Go Back</a> </p>
                 </div>
+                <div class="col-12 mb-2 mt-4">
+                <p class="text-center"><a href=".?page=offline" class="text-decoration-none">Data offline</a> </p>
+                </div>
                 </form>
             </div>
         </div>
