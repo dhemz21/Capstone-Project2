@@ -10,7 +10,7 @@
             </div>
             <div class="col-lg-4 d-flex flex-column align-items-center justify-content-center shadow bg-white ">
                 <div class="container-title w-100">
-                    <h3 class="card-title p-3 text-center bg-danger text-white rounded-0">qr code scanner</h3>
+                    <h3 class="card-title p-3 text-center bg-danger text-white rounded-0">evsu scanner</h3>
                 </div>
 
                 <div class="mainpage mb-5">
