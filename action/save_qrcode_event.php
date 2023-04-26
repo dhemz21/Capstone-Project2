@@ -52,7 +52,7 @@ if (isset($_POST['text'])) {
 
         $count = mysqli_num_rows($result);
         if($count>0){
-            echo "<script>alert('Data Existed!'); window.location.href='.?folder=pages/&page=school_event';</script>";
+            echo "<script>alert('Data is already existed!'); window.location.href='.?folder=pages/&page=school_event';</script>";
 
         } else {
             // CHECK INTERNET CONNECTION BEFORE INSERTING DATA INTO THE ONLINE_ATTENDANCE TABLE
