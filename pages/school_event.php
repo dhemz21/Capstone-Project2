@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php
+session_start();
+
+?>
+
 <body>
 <div class="container">
         <div class="card rounded-0 border-0 shadow-lg">
@@ -30,6 +35,68 @@
     </div>
     </div>
     <script src="vendors/instascan/instascan.min.js"></script>
+
+    <?php
+    if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'successful') {
+    ?>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successful',
+                text: 'You successfully registered online'
+            })
+        </script>
+    <?php
+        unset($_SESSION['validate']);
+    }
+    ?>
+
+<?php
+    if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'offline') {
+    ?>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successful',
+                text: 'No internet connection. Attendance data has been stored locally'
+            })
+        </script>
+    <?php
+        unset($_SESSION['validate']);
+    }
+    ?>
+
+<?php
+  if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'existed') {
+  ?>
+    <script>
+      Swal.fire({
+        icon: 'error',
+        title: 'Data Existed ',
+        text: 'User is already existed!'
+      })
+    </script>
+  <?php
+    unset($_SESSION['validate']);
+  }
+  ?>
+
+
+    <!-- QR CODE VALIDATION SECTION -->
+    <?php
+    if (isset($_SESSION['validate']) && $_SESSION['validate'] != '') {
+    ?>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid QR Code ',
+                text: 'Please check your QR Code!'
+            })
+        </script>
+    <?php
+        unset($_SESSION['validate']);
+    }
+    ?>
 
 
     <!-- QR CODE SCANNER SECTION -->

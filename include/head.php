@@ -21,6 +21,9 @@
     <!-- FontawesomeIcon online -->
     <link rel="stylesheet" href="vendors/fontawesome-free/css/all.min.css">
 
+    <!-- SweetAlert2 -->
+    <script src="dist/sweetalert2/sweetalert2.all.min.js"></script>
+
     <!-- Jquery -->
     
     <script src="vendors/jquery/jquery.min.js"></script>

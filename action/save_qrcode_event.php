@@ -1,5 +1,8 @@
 <?php
 
+session_start();
+
+
 // DATABASE CONNECTION
 require_once('database/db_conn.php');
 
@@ -52,7 +55,10 @@ if (isset($_POST['text'])) {
 
         $count = mysqli_num_rows($result);
         if($count>0){
-            echo "<script>alert('Data is already existed!'); window.location.href='.?folder=pages/&page=school_event';</script>";
+            $_SESSION['validate'] = "existed";
+            echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
+
+            // echo "<script>alert('Data is already existed!'); window.location.href='.?folder=pages/&page=school_event';</script>";
 
         } else {
             // CHECK INTERNET CONNECTION BEFORE INSERTING DATA INTO THE ONLINE_ATTENDANCE TABLE
@@ -61,7 +67,9 @@ if (isset($_POST['text'])) {
                 $sql = "INSERT INTO online_attendance (Registered_ID, IDnumber, Email, username, firstname, lastname, log_date, time_in, login_type)VALUES ('$reg_id', '$idnumber', '$mail', '$login_username', '$fname', '$lname', '$date', '$time', '$type')";
 
                 if (mysqli_query($conn, $sql)) {
-                    echo "<script>alert('You successfully registered online!');  window.location.href='.?folder=pages/&page=school_event';</script>";
+                    $_SESSION['validate'] = "successful";
+                    echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
+                    // echo "<script>alert('You successfully registered online!');  window.location.href='.?folder=pages/&page=school_event';</script>";
                 } else {
                     echo "Error: " . $sql . "" . mysqli_error($conn);
                 }
@@ -83,11 +91,16 @@ if (isset($_POST['text'])) {
                 $attendanceDataJson = json_encode($attendanceData);
                 echo "<script>localStorage.setItem('attendanceData', '$attendanceDataJson');</script>";
 
-                echo "<script>alert('No internet connection. Attendance data has been stored locally.'); window.location.href='.?folder=pages/&page=school_event';</script>";
+                $_SESSION['validate'] = "offline";
+                echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
+
+                // echo "<script>alert('No internet connection. Attendance data has been stored locally.'); window.location.href='.?folder=pages/&page=school_event';</script>";
             }
         }
     } else {
-        echo "<script>alert('Invalid QR Code!'); window.location.href='.?folder=pages/&page=school_event';</script>";
+        $_SESSION['validate'] = "unsuccessful";
+        echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
+        // echo "<script>alert('Invalid QR Code!'); window.location.href='.?folder=pages/&page=school_event';</script>";
     }
 }
 

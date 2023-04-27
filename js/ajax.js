@@ -8,7 +8,13 @@ syncBtn.addEventListener('click', function() {
 
     // Check if there is any data to sync
     if (!attendanceData) {
-        alert('No data to sync!');
+        // alert('No data to sync!');
+
+        Swal.fire({
+            icon: 'error',
+            title: 'No record',
+            text: 'No data to sync!',
+        })
         return;
     }
 
@@ -29,13 +35,28 @@ syncBtn.addEventListener('click', function() {
                     if (syncXhr.status === 200) {
                         localStorage.removeItem('attendanceData');
                         console.log(xhr.responseText);
-                        alert('Attendance data has been synchronized successfully!');
+                        // alert('Attendance data has been synchronized successfully!');
+                        Swal.fire(
+                            'Success',
+                            'Attendance data has been synchronized successfully!',
+                            'success'
+                          )
                     } else {
-                        alert('An error occurred while synchronizing the attendance data.');
+                        // alert('An error occurred while synchronizing the attendance data.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while synchronizing the attendance data!',
+                        })
                     }
                 };
             } else {
-                alert('No internet connection!');
+                // alert('No internet connection!');
+                Swal.fire(
+                    'No Internet',
+                    'No internet connection unable to sync file!',
+                    'question'
+                )
             }
         }
     };

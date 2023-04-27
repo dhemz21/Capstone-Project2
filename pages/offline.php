@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <body>
     <div class="container-fluid">
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
@@ -21,7 +22,7 @@
                         <h4 class="card-title pb-2 text-center">Attendance Management System </h4>
                     </div>
                     <div class="Login-title">
-                        <h4 class="login-title">Scanned Offline</h4>
+                        <h4 class="login-title">Saved Offline</h4>
                     </div>
                     <div class="d-flex col-12 align-items-center justify-content-center">
                         <div class="card m-1 rounded-0 d-flex col-12 align-items-center justify-content-center" style="width: 100%">
