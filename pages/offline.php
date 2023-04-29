@@ -27,10 +27,30 @@
                     <div class="d-flex col-12 align-items-center justify-content-center">
                         <div class="card m-1 rounded-0 d-flex col-12 align-items-center justify-content-center" style="width: 100%">
                             <div class="card-body">
-                                <h5>
-                                    <div class="btn btn-danger d-flex rounded-0" id="sync-btn">Sync now</div>
+                           <form action=".?folder=action/&page=sync_data" method="post" novalidate>
+                           <h5>
+                                    <div class="btn btn-danger d-flex rounded-0 mb-4" onclick="syncData()">Sync now</div>
+                                    
+                                    <?php
+                                    // Read the scanned data from the JSON file
+                                    $data = json_decode(file_get_contents('action/scanned_data.json'), true);
+
+                                    // Check if the $data variable is not null or empty
+                                    if ($data && is_array($data)) {
+                                        // Get the count of saved data
+                                        $count = count($data);
+
+                                        // Display the count inside the card
+                                        echo "<h5>Saved data: " . $count . "</h5>";
+                                    } else {
+                                        echo "<h5>No data found!</h5>";
+                                    }
+
+                                    ?>
+
 
                                 </h5>
+                           </form>
                             </div>
                         </div>
                     </div>
@@ -46,7 +66,23 @@
     </section>
     </div>
 
-<script src="js/ajax.js"></script>
+    <script>
+    setTimeout(function(){
+    location.reload();
+  }, 5000);
+   </script>
+
+<script>
+function syncData() {
+    // Call the PHP script that will synchronize the data
+    fetch('action/sync_data.php')
+        .then(response => response.text())
+        .then(data => {
+            alert(data); // Show the response from the PHP script
+        });
+}
+</script>
+
 
 </body>
 

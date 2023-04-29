@@ -1,28 +1,19 @@
 <?php
 
 session_start();
-
-
 // DATABASE CONNECTION
 require_once('database/db_conn.php');
 
 // FUNCTION TO CHECK INTERNET CONNECTION
-function checkInternetConnection() {
-    $curlInit = curl_init('https://www.google.com');
-    curl_setopt($curlInit, CURLOPT_CONNECTTIMEOUT, 10);
-    curl_setopt($curlInit, CURLOPT_HEADER, true);
-    curl_setopt($curlInit, CURLOPT_NOBODY, true);
-    curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
-
-    $response = curl_exec($curlInit);
-
-    curl_close($curlInit);
-
-    if ($response) {
+function check_internet_connection()
+{
+    $connected = @fsockopen("www.google.com", 80);
+    if ($connected) {
+        fclose($connected);
         return true;
+    } else {
+        return false;
     }
-
-    return false;
 }
 
 // GETTING THE INFORMATION OF THE QRID FROM THE TABLE
@@ -33,14 +24,14 @@ if (isset($_POST['text'])) {
     $time = date("H:i:s", time());
     date_default_timezone_set('Australia/Perth');
 
-    $validate = "SELECT *FROM registered_users WHERE qrID ='$qrID'";
+    $validate = "SELECT * FROM registered_users WHERE qrID ='$qrID'";
     $result = mysqli_query($conn, $validate);
 
     $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
     $count = mysqli_num_rows($result);
 
     if ($count == 1) {
-        // GETTING THE ROW OF TABLE WERE THE TABLE IS LOCATED ON REGISTERED_USERS
+        // GETTING THE ROW OF TABLE WHERE THE TABLE IS LOCATED ON registered_users
         $reg_id = $row['Registered_ID'];
         $idnumber = $row['IDnumber'];
         $mail = $row['email'];
@@ -49,59 +40,71 @@ if (isset($_POST['text'])) {
         $lname = $row['Lastname'];
         $type = $row['login_type'];
 
-        // CHECK THE USER THAT IS ALREADY EXISTED ON THE DATABASE
+        // CHECK IF USER ALREADY EXISTS IN THE DATABASE
         $checkUser = "SELECT * FROM online_attendance WHERE email='$mail'";
         $result = mysqli_query($conn, $checkUser);
-
         $count = mysqli_num_rows($result);
-        if($count>0){
+        
+        if($count > 0){
             $_SESSION['validate'] = "existed";
             echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
-
-            // echo "<script>alert('Data is already existed!'); window.location.href='.?folder=pages/&page=school_event';</script>";
-
         } else {
-            // CHECK INTERNET CONNECTION BEFORE INSERTING DATA INTO THE ONLINE_ATTENDANCE TABLE
-            if (checkInternetConnection()) {
-                // Insert data into the database
-                $sql = "INSERT INTO online_attendance (Registered_ID, IDnumber, Email, username, firstname, lastname, log_date, time_in, login_type)VALUES ('$reg_id', '$idnumber', '$mail', '$login_username', '$fname', '$lname', '$date', '$time', '$type')";
-
+            $scanned_data = array(
+                'Registered_ID' => $reg_id,
+                'IDnumber' => $idnumber,
+                'Email' => $mail,
+                'username' => $login_username,
+                'firstname' => $fname,
+                'lastname' => $lname,
+                'log_date' => $date,
+                'time_in' => $time,
+                'login_type' => $type
+            );
+            // CHECK INTERNET CONNECTION
+            if (check_internet_connection()) {
+                // INSERT THE DATA INTO THE online_attendance TABLE
+                $sql = "INSERT INTO online_attendance (Registered_ID, IDnumber, Email, username, firstname, lastname, log_date, time_in, login_type) VALUES ('$reg_id', '$idnumber', '$mail', '$login_username', '$fname', '$lname', '$date', '$time', '$type')";
                 if (mysqli_query($conn, $sql)) {
                     $_SESSION['validate'] = "successful";
                     echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
-                    // echo "<script>alert('You successfully registered online!');  window.location.href='.?folder=pages/&page=school_event';</script>";
                 } else {
                     echo "Error: " . $sql . "" . mysqli_error($conn);
                 }
             } else {
+    // IF THERE IS NO INTERNET CONNECTION, SAVE THE DATA TO A TEMPORARY JSON FILE
+    $data = json_decode(file_get_contents('action/scanned_data.json'), true);
 
-                // Store data in local storage
-                $attendanceData = array(
-                    'Registered_ID' => $reg_id,
-                    'IDnumber' => $idnumber,
-                    'Email' => $mail,
-                    'username' => $login_username,
-                    'firstname' => $fname,
-                    'lastname' => $lname,
-                    'log_date' => $date,
-                    'time_in' => $time,
-                    'login_type' => $type
-                );
-
-                $attendanceDataJson = json_encode($attendanceData);
-                echo "<script>localStorage.setItem('attendanceData', '$attendanceDataJson');</script>";
-
-                $_SESSION['validate'] = "offline";
-                echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
-
-                // echo "<script>alert('No internet connection. Attendance data has been stored locally.'); window.location.href='.?folder=pages/&page=school_event';</script>";
+    if (is_array($data) && !empty($data)) {
+        
+        // CHECK IF DATA ALREADY EXISTS IN JSON FILE
+        $already_saved = false;
+        foreach ($data as $item) {
+            if ($item['Email'] == $mail && $item['log_date'] == $date) {
+                $already_saved = true;
+                break;
             }
+        }
+        if ($already_saved) {
+            $_SESSION['validate'] = "offline-existed";
+            echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
+        } else {
+            $data[] = $scanned_data;
+            $count = count($data);
+            file_put_contents('action/scanned_data.json', json_encode($data));
+            $_SESSION['validate'] = "offline-successful";
+            echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
+        }
+    } else {
+        $data = array($scanned_data);
+        file_put_contents('action/scanned_data.json', json_encode($data));
+        $_SESSION['validate'] = "offline-successful";
+        echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>";
+    }
+}
         }
     } else {
         $_SESSION['validate'] = "unsuccessful";
         echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
-        // echo "<script>alert('Invalid QR Code!'); window.location.href='.?folder=pages/&page=school_event';</script>";
     }
+    
 }
-
-?>

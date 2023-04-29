@@ -7,7 +7,7 @@ session_start();
 ?>
 
 <body>
-<div class="container">
+    <div class="container">
         <div class="card rounded-0 border-0 shadow-lg">
             <h5 class="card-header rounded-0 bg-danger">evsu scanner</h5>
             <div class="card-body">
@@ -24,11 +24,11 @@ session_start();
                                 </div>
                             </div>
                             <div class="col-12 mb-2 mt-4">
-                <p class="text-start"><a href=".?page=menu" class="text-decoration-none">Go Back</a> </p>
-                </div>
-                <div class="col-12 mb-2 mt-4">
-                <p class="text-center"><a href=".?page=offline" class="text-decoration-none">Data offline</a> </p>
-                </div>
+                                <p class="text-start"><a href=".?page=menu" class="text-decoration-none">Go Back</a> </p>
+                            </div>
+                            <div class="col-12 mb-2 mt-4">
+                                <p class="text-center"><a href=".?page=offline" class="text-decoration-none">Saved offline</a> </p>
+                            </div>
                 </form>
             </div>
         </div>
@@ -43,7 +43,7 @@ session_start();
             Swal.fire({
                 icon: 'success',
                 title: 'Successful',
-                text: 'You successfully registered online'
+                text: 'You successfully registered online!'
             })
         </script>
     <?php
@@ -51,14 +51,14 @@ session_start();
     }
     ?>
 
-<?php
-    if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'offline') {
+    <?php
+    if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'offline-successful') {
     ?>
         <script>
             Swal.fire({
                 icon: 'success',
                 title: 'Successful',
-                text: 'No internet connection. Attendance data has been stored locally'
+                text: 'No internet! Your data has been saved locally'
             })
         </script>
     <?php
@@ -66,20 +66,36 @@ session_start();
     }
     ?>
 
-<?php
-  if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'existed') {
-  ?>
-    <script>
-      Swal.fire({
-        icon: 'error',
-        title: 'Data Existed ',
-        text: 'User is already existed!'
-      })
-    </script>
-  <?php
-    unset($_SESSION['validate']);
-  }
-  ?>
+
+    <?php
+    if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'existed') {
+    ?>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Data Existed ',
+                text: 'This data is already existed!'
+            })
+        </script>
+    <?php
+        unset($_SESSION['validate']);
+    }
+    ?>
+
+    <?php
+    if (isset($_SESSION['validate']) && $_SESSION['validate'] == 'offline-existed') {
+    ?>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Data Existed ',
+                text: 'This data is already existed!'
+            })
+        </script>
+    <?php
+        unset($_SESSION['validate']);
+    }
+    ?>
 
 
     <!-- QR CODE VALIDATION SECTION -->
@@ -97,40 +113,9 @@ session_start();
         unset($_SESSION['validate']);
     }
     ?>
+    <!-- END -->
 
-
-    <!-- QR CODE SCANNER SECTION -->
-    <script type="text/javascript">
-        let scanner = new Instascan.Scanner({
-            video: document.getElementById('preview'),
-            mirror: false,
-            captureImage: true,
-            rotation: 90
-        });
-        scanner.addListener('scan', function(content) {
-            console.log(content);
-        });
-        Instascan.Camera.getCameras().then(function(cameras) {
-            if (cameras.length > 0) {
-                // if the user has a rear/back camera 
-                if (cameras[1]) {
-                    // Use that by default
-                    scanner.start(cameras[1]);
-                } else {
-                    scanner.start(cameras[0]);
-                }
-            } else {
-                console.error('No cameras found.');
-            }
-        }).catch(function(e) {
-            console.error(e);
-        });
-
-        scanner.addListener('scan', function(c) {
-            document.getElementById('text').value = c;
-            document.forms[0].submit();
-        });
-    </script>
-    <!-- END --> 
+    <script src="js/scanner.js"></script>
 </body>
+
 </html>

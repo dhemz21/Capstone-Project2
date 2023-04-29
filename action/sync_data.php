@@ -2,68 +2,57 @@
 // DATABASE CONNECTION
 require_once('../database/db_conn.php');
 
-// Check if there is an internet connection
-$connected = check_internet_connection();
-
-// If there is an internet connection, insert the attendance data into the online_attendance table
-if ($connected) {
-  // Retrieve the attendance data from the AJAX request
-  $attendanceData = json_decode(file_get_contents('php://input'), true);
-
-          // CHECK THE USER THAT IS ALREADY EXISTED ON THE DATABASE
-          $checkUser = "SELECT * FROM online_attendance WHERE email='$mail'";
-          $result = mysqli_query($conn, $checkUser);
-  
-          $count = mysqli_num_rows($result);
-
-          if($count>0){
-            $_SESSION['validate'] = "existed";
-            echo "<script>window.location.href='.?folder=pages/&page=school_event';</script>"; 
-
-            // echo "<script>alert('Data is already existed!'); window.location.href='.?folder=pages/&page=school_event';</script>";
-
-        }else{
-
-            // Insert the attendance data into the online_attendance table
-  $sql = "INSERT INTO online_attendance (Registered_ID, IDnumber, Email, username, firstname, lastname, log_date, time_in, login_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  $stmt = mysqli_prepare($conn, $sql);
-  mysqli_stmt_bind_param($stmt, 'sssssssss', $attendanceData['Registered_ID'], $attendanceData['IDnumber'], $attendanceData['Email'], $attendanceData['username'], $attendanceData['firstname'], $attendanceData['lastname'], $attendanceData['log_date'], $attendanceData['time_in'], $attendanceData['login_type']);
-  mysqli_stmt_execute($stmt);
-  mysqli_stmt_close($stmt);
-
-        }
-
-        
-
-
-  if (mysqli_error($conn)) {
-      echo "Error: " . mysqli_error($conn);
-  } else {
-      echo "Data saved successfully!";
-  }
-} else {
-  // If there is no internet connection, store the attendance data in local storage
-  echo "No internet connection, Please try again later!";
-  // code to store data in local storage
+// CHECK INTERNET CONNECTIVITY
+$host = 'www.google.com';
+$port = 80;
+$timeout = 5;
+$connected = @fsockopen($host, $port, $errno, $errstr, $timeout);
+if (!$connected) {
+    die('No internet connection, Please try again later!');
 }
 
-// Close the database connection
-mysqli_close($conn);
+// READ DATA FROM JSON FILE
+$data = json_decode(file_get_contents('scanned_data.json'), true);
 
-// Function to check for an internet connection using curl
-function check_internet_connection() {
-  $url = 'https://www.google.com';
-  $ch = curl_init($url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-  curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-  $output = curl_exec($ch);
-  $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  curl_close($ch);
-  if ($httpcode >= 200 && $httpcode < 300) {
-    return true;
-  } else {
-    return false;
-  }
+// CHECK IF JSON FILE IS EMPTY
+if (empty($data)) {
+    die('No data to be synchronized!');
 }
+
+// INSERT DATA INTO DATABASE
+$success_count = 0;
+foreach ($data as $row) {
+    $reg_id = $row['Registered_ID'];
+    $idnumber = $row['IDnumber'];
+    $mail = $row['Email'];
+    $login_username = $row['username'];
+    $fname = $row['firstname'];
+    $lname = $row['lastname'];
+    $date = $row['log_date'];
+    $time = $row['time_in'];
+    $type = $row['login_type'];
+
+    $sql = "INSERT INTO online_attendance (Registered_ID, IDnumber, Email, username, firstname, lastname, log_date, time_in, login_type) VALUES ('$reg_id', '$idnumber', '$mail', '$login_username', '$fname', '$lname', '$date', '$time', '$type')";
+
+    if (mysqli_query($conn, $sql)) {
+        // Remove the data from the JSON file after successful insertion
+        $data = array_filter($data, function ($item) use ($mail, $date) {
+            return ($item['Email'] !== $mail || $item['log_date'] !== $date);
+        });
+        // file_put_contents('scanned_data.json', json_encode($data));
+        // Write the empty array to the file
+        file_put_contents('scanned_data.json', json_encode([]));
+
+        $success_count++;
+    } else {
+        echo "Error: " . $sql . "" . mysqli_error($conn);
+    }
+}
+
+// CHECK IF ANY DATA WAS SYNCHRONIZED
+if ($success_count > 0) {
+    
+    echo "Data synchronized successfully";
+
+}
+?>
