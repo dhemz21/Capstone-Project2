@@ -8,9 +8,9 @@
                 <div class="row justify-content-center">
                 </div>
             </div>
-            <div class="col-lg-4 d-flex flex-column align-items-center justify-content-center shadow bg-white ">
+            <div class="col-lg-4 d-flex flex-column align-items-center justify-content-center shadow" id="main-container">
                 <div class="container-title w-100">
-                    <h3 class="card-title p-3 text-center bg-danger text-white rounded-0">evsu scanner</h3>
+                    <h3 class="card-title p-3 text-center text-white rounded-0" id="top-color">evsu scanner</h3>
                 </div>
 
                 <div class="mainpage">
@@ -25,7 +25,7 @@
                     </div>
                     <div class="d-grid col-12">
                         <div class="btn-group mt-1">
-                    <a href=".?page=school_event" class="btn btn-danger rounded-0" type="button">Scan now</a>
+                    <a href=".?page=school_event" class="btn btn-danger rounded-0" id="btn" type="button">Scan now</a>
                            
                         </div>
                     </div>

@@ -23,6 +23,18 @@ body{
 
 /* MAINPAGE SECTION */
 
+#top-color{
+	background-color: #a91414;
+}
+
+#main-container{
+	background-color: #F5F5F5;
+}
+
+#btn{
+	background-color: #a91414;
+}
+
 .card{
 	border: 2px solid black;
 }

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <body>
     <div class="container-fluid">
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
@@ -9,9 +8,9 @@
                 <div class="row justify-content-center">
                 </div>
             </div>
-            <div class="col-lg-4 d-flex flex-column align-items-center justify-content-center shadow bg-white ">
+            <div class="col-lg-4 d-flex flex-column align-items-center justify-content-center shadow"id="main-container">
                 <div class="container-title w-100">
-                    <h3 class="card-title p-3 text-center bg-danger text-white rounded-0">evsu scanner</h3>
+                    <h3 class="card-title p-3 text-center text-white rounded-0" id="top-color">evsu scanner</h3>
                 </div>
 
                 <div class="mainpage mb-5">
@@ -29,7 +28,7 @@
                             <div class="card-body">
                            <form action=".?folder=action/&page=sync_data" method="post" novalidate>
                            <h5>
-                                    <div class="btn btn-danger d-flex rounded-0 mb-4" onclick="syncData()">Sync now</div>
+                                    <div class="btn btn-danger d-flex rounded-0 mb-4" id="btn" onclick="syncData()">Sync now</div>
                                     
                                     <?php
                                     // Read the scanned data from the JSON file

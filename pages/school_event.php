@@ -8,8 +8,8 @@ session_start();
 
 <body>
     <div class="container">
-        <div class="card rounded-0 border-0 shadow-lg">
-            <h5 class="card-header rounded-0 bg-danger">evsu scanner</h5>
+        <div class="card rounded-0 border-0 shadow-lg" id="main-container">
+            <h5 class="card-header rounded-0" id="top-color">evsu scanner</h5>
             <div class="card-body">
                 <form method="post" action=".?folder=action/&page=save_qrcode_event" novalidate>
                     <div class="row">

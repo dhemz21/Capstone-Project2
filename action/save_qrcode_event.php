@@ -21,8 +21,7 @@ if (isset($_POST['text'])) {
 
     $qrID = $_POST['text'];
     $date = date("Y-m-d");
-    $time = date("H:i:s", time());
-    date_default_timezone_set('Australia/Perth');
+    $time = date("h:i A");
 
     $validate = "SELECT * FROM registered_users WHERE qrID ='$qrID'";
     $result = mysqli_query($conn, $validate);

@@ -30,18 +30,7 @@
     <script src="vendors/jquery/jquery.slim.min.js"></script>
     <!-- <script src="https://kit.fontawesome.com/eebafef846.js" crossorigin="anonymous"></script> -->
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('js/service-worker.js', {
-    scope: 'js/service-worker.js'
-  }).then(function(registration) {
-    console.log('Service worker registration successful with scope: ', registration.scope);
-  }, function(err) {
-    console.log('Service worker registration failed: ', err);
-  });
-}
-
-</script>
+<script src="js/app.js"></script>
 
 
 
